@@ -1,0 +1,18 @@
+$def with ()
+
+<html>
+<head>
+    <title>Subir Imagen</title>
+</head>
+<body>
+    <h1>Subir Imagen y Hacer Pregunta</h1>
+    <form method="POST" enctype="multipart/form-data" action="/upload">
+        <input type="file" name="myfile" />
+        <br/>
+        <label for="prompt">Pregunta:</label>
+        <input type="text" name="prompt" />
+        <br/>
+        <input type="submit" />
+    </form>
+</body>
+</html>
