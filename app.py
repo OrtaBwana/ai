@@ -55,7 +55,8 @@ def generar_respuesta(prompt, imagen_base64):
         "model": "llava",
         "prompt": prompt,
         "images": [imagen_base64],
-        "stream": False
+        "stream": False,
+        "system":"Eres un psicólogo especializado en adicciones. Analiza imágenes desde una perspectiva psicológica y ofrece feedback profesional y comprensivo, considerando el impacto emocional en los pacientes."
     }
 
     response = requests.post(url, json=data)
