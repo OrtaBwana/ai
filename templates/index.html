@@ -1,271 +1,271 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <title>Subir Imagen</title>
+    <title>Área de Dibujo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 0;
+            max-width: none;
+            justify-content: space-between;
+            overflow-x: hidden;
+        }
+
+        .upload-form {
+            width: 100%;
+            margin-bottom: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            /* Espacio entre los botones */
+            align-items: center;
+        }
+
+        /* Ocultar el input file original */
+        .upload-form input[type="file"] {
+            opacity: 0;
+            position: absolute;
+            z-index: -1;
+        }
+
+        /* Contenedor del botón personalizado */
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #5ccff5;
+            color: white;
+            font-size: 14px;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Cambia el color al pasar el mouse sobre el botón */
+        .custom-file-upload:hover {
+            background-color: #4cbbe5;
+        }
+
+        .upload-form input[type="submit"] {
+            width: auto;
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            font-size: 14px;
+            border-radius: 5px;
+            border: none;
+            background-color: #5ccff5;
+            color: white;
+            text-decoration: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
         #canvas {
-            border: 1px solid black;
+            display: block;
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            height: calc(100% - 220px);
+            border: 2px solid #000000;
+            border-radius: 10px;
+            background-color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .top-toolbar,
+        .bottom-toolbar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .top-toolbar button,
+        .bottom-toolbar button {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            padding: 10px;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-toolbar button:hover,
+        .bottom-toolbar button:hover {
+            background-color: #0056b3;
+        }
+
+        #colorPicker {
+            width: 48px;
+            height: 48px;
+            border-radius: 20%;
+            border: none;
+            padding: 0;
+        }
+
+        .save-button {
+            width: 100%;
+            background-color: #ff006e;
+            color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .save-button:hover {
+            background-color: #d90058;
+        }
+
+        /* Estilo para el Modal */
+        .modal {
+            display: none;
+            /* Oculto por defecto */
+            position: fixed;
+            /* Posición fija para superponerlo */
+            z-index: 1000;
+            /* Colocar encima de otros elementos */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            /* Habilitar desplazamiento si es necesario */
+            background-color: rgba(0, 0, 0, 0.5);
+            /* Fondo semitransparente */
+        }
+
+        .modal-content {
+            margin: 15% auto;
+            /* Centrar en la pantalla */
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f0f0f0;
+            width: 300px;
+            max-width: 80%;
+            text-align: center;
+            font-size: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-content .loading-icon {
+            font-size: 40px;
+            /* Tamaño del ícono de carga */
+            color: #007bff;
+            /* Color del ícono de carga */
+            margin-bottom: 20px;
+            /* Espacio entre ícono y texto */
+        }
+
+        .modal-content p {
+            margin-top: 0;
+            /* Eliminar el margen superior del párrafo */
+        }
+
+        @media (max-width: 400px) {
+
+            .top-toolbar button,
+            .bottom-toolbar button {
+                width: 40px;
+                height: 40px;
+                padding: 8px;
+            }
+
+            .save-button {
+                padding: 12px;
+                font-size: 16px;
+            }
         }
     </style>
-    <script>
-        let canvas, ctx;
-        let drawing = false;
-        let currentTool = 'pencil';
-        let pencilColor = '#000000'; // Color inicial del lápiz
-        let shapes = []; // Array para almacenar figuras
-        let selectedShape = null;
-        let offsetX = 0;
-        let offsetY = 0;
-
-        function initCanvas() {
-            canvas = document.getElementById('canvas');
-            ctx = canvas.getContext('2d');
-
-            // Dibuja un fondo blanco al iniciar
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Eventos del mouse
-            canvas.addEventListener('mousedown', handleMouseDown);
-            canvas.addEventListener('mouseup', handleMouseUp);
-            canvas.addEventListener('mousemove', handleMouseMove);
-
-            // Eventos táctiles
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchend', handleTouchEnd);
-            canvas.addEventListener('touchmove', handleTouchMove);
-        }
-
-        function handleMouseDown(event) {
-            const { x, y } = getMousePosition(event);
-            handleStartDrawing(x, y);
-        }
-
-        function handleMouseUp() {
-            handleStopDrawing();
-        }
-
-        function handleMouseMove(event) {
-            const { x, y } = getMousePosition(event);
-            handleDrawing(x, y);
-        }
-
-        function handleTouchStart(event) {
-            const { x, y } = getTouchPosition(event);
-            handleStartDrawing(x, y);
-        }
-
-        function handleTouchEnd() {
-            handleStopDrawing();
-        }
-
-        function handleTouchMove(event) {
-            const { x, y } = getTouchPosition(event);
-            handleDrawing(x, y);
-            event.preventDefault(); // Evitar el desplazamiento de la página
-        }
-
-        function handleStartDrawing(x, y) {
-            if (currentTool === 'pencil' || currentTool === 'eraser') {
-                startDrawing(x, y);
-            } else {
-                selectedShape = getShapeAtPosition(x, y);
-                if (selectedShape) {
-                    offsetX = x - selectedShape.x;
-                    offsetY = y - selectedShape.y;
-                } else {
-                    shapes.push({ type: currentTool, x, y });
-                    drawShape(currentTool, x, y);
-                }
-            }
-        }
-
-        function handleStopDrawing() {
-            if (selectedShape) {
-                selectedShape = null;
-            }
-            stopDrawing();
-        }
-
-        function handleDrawing(x, y) {
-            if (drawing) {
-                draw(x, y);
-            } else if (selectedShape) {
-                moveShape(selectedShape, x - offsetX, y - offsetY);
-                redrawCanvas();
-            }
-        }
-
-        function getMousePosition(event) {
-            const rect = canvas.getBoundingClientRect();
-            return {
-                x: event.clientX - rect.left,
-                y: event.clientY - rect.top
-            };
-        }
-
-        function getTouchPosition(event) {
-            const rect = canvas.getBoundingClientRect();
-            const touch = event.touches[0];
-            return {
-                x: touch.clientX - rect.left,
-                y: touch.clientY - rect.top
-            };
-        }
-
-        function startDrawing(x, y) {
-            drawing = true;
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-        }
-
-        function stopDrawing() {
-            drawing = false;
-            ctx.beginPath();
-        }
-
-        function draw(x, y) {
-            if (!drawing) return;
-
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-
-            if (currentTool === 'pencil') {
-                ctx.strokeStyle = pencilColor;
-            } else if (currentTool === 'eraser') {
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 10; // Tamaño del borrador
-            }
-
-            ctx.lineTo(x, y);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-        }
-
-        function setPencil() {
-            currentTool = 'pencil';
-            ctx.lineWidth = 2; // Tamaño del lápiz
-        }
-
-        function setEraser() {
-            currentTool = 'eraser';
-        }
-
-        function clearCanvas() {
-            ctx.fillStyle = '#FFFFFF'; // Color de fondo blanco
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            shapes = []; // Limpiar el array de figuras
-        }
-
-        function setPencilColor(event) {
-            pencilColor = event.target.value;
-        }
-
-        function drawShape(shape, x, y) {
-            const size = 50;
-
-            ctx.beginPath();
-            ctx.strokeStyle = pencilColor;
-            ctx.lineWidth = 2;
-
-            if (shape === 'circle') {
-                ctx.arc(x, y, size, 0, 2 * Math.PI);
-            } else if (shape === 'square') {
-                ctx.rect(x - size, y - size, size * 2, size * 2);
-            } else if (shape === 'triangle') {
-                ctx.moveTo(x, y - size);
-                ctx.lineTo(x - size, y + size);
-                ctx.lineTo(x + size, y + size);
-                ctx.closePath();
-            }
-
-            ctx.stroke();
-        }
-
-        function getShapeAtPosition(x, y) {
-            return shapes.find(shape => {
-                const size = 50;
-                const dist = Math.sqrt((shape.x - x) ** 2 + (shape.y - y) ** 2);
-                return shape.type === 'circle' ? dist <= size :
-                    shape.type === 'square' ? x >= shape.x - size && x <= shape.x + size &&
-                        y >= shape.y - size && y <= shape.y + size :
-                        shape.type === 'triangle' ? pointInTriangle(x, y, shape) : false;
-            });
-        }
-
-        function pointInTriangle(x, y, shape) {
-            const size = 50;
-            const x1 = shape.x;
-            const y1 = shape.y - size;
-            const x2 = shape.x - size;
-            const y2 = shape.y + size;
-            const x3 = shape.x + size;
-            const y3 = shape.y + size;
-
-            const area = Math.abs((x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2)) / 2);
-            const area1 = Math.abs((x * (y2 - y3) + x2 * (y3 - y) + x3 * (y - y2)) / 2);
-            const area2 = Math.abs((x1 * (y - y3) + x * (y3 - y1) + x3 * (y1 - y)) / 2);
-            const area3 = Math.abs((x1 * (y2 - y) + x2 * (y - y1) + x * (y1 - y2)) / 2);
-
-            return (area === area1 + area2 + area3);
-        }
-
-        function moveShape(shape, x, y) {
-            shape.x = x;
-            shape.y = y;
-        }
-
-        function redrawCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.beginPath();
-            shapes.forEach(shape => {
-                drawShape(shape.type, shape.x, shape.y);
-            });
-        }
-
-        function downloadCanvas() {
-            const link = document.createElement('a');
-            link.download = 'canvas-drawing.png';
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-        }
-
-
-        document.addEventListener('DOMContentLoaded', initCanvas);
-    </script>
 </head>
 
 <body>
-    <h1>Selecciona un imagen</h1>
-    <form method="POST" enctype="multipart/form-data" action="/upload">
-        <input type="file" name="myfile" />
-        <br />
-        <label for="prompt">Pregunta:</label>
-        <input type="text" name="prompt" />
-        <br />
-        <input type="submit" />
-    </form>
+    <div class="container">
+        <form method="POST" enctype="multipart/form-data" action="/upload" class="upload-form"
+            onsubmit="showLoadingModal()">
+            <div style="flex-direction: row;">
+                <label for="file-upload" class="custom-file-upload">
+                    <i class="fas fa-cloud-upload-alt"></i> Seleccionar archivo
+                </label>
+                <input id="file-upload" type="file" name="myfile" accept="image/*" required />
+                <input type="submit" value="Subir y Analizar" />
+            </div>
 
-    <h2>Área de Dibujo</h2>
-    <canvas id="canvas" width="500" height="500"></canvas>
-    <br />
-    <button type="button" onclick="setPencil()">Lápiz</button>
-    <button type="button" onclick="setEraser()">Goma</button>
-    <button type="button" onclick="clearCanvas()">Borrar Todo</button>
-    <br />
-    <input type="color" id="colorPicker" value="#000000" onchange="setPencilColor(event)" />
-    <br />
-    <button type="button" onclick="currentTool = 'circle'">Dibujar Círculo</button>
-    <button type="button" onclick="currentTool = 'square'">Dibujar Cuadrado</button>
-    <button type="button" onclick="currentTool = 'triangle'">Dibujar Triángulo</button>
-    <br />
-    <button type="button" onclick="downloadCanvas()">Descargar Dibujo</button>
+        </form>
+        <canvas id="canvas"></canvas>
+        <div class="top-toolbar">
+            <button type="button" onclick="setPencil()">
+                <i class="fas fa-pencil-alt"></i>
+            </button>
+            <button type="button" onclick="setEraser()">
+                <i class="fas fa-eraser"></i>
+            </button>
+            <button type="button" onclick="clearCanvas()">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+        <div class="bottom-toolbar">
+            <button type="button" onclick="currentTool = 'circle'">
+                <i class="fas fa-circle"></i>
+            </button>
+            <button type="button" onclick="currentTool = 'square'">
+                <i class="fas fa-square"></i>
+            </button>
+            <button type="button" onclick="currentTool = 'triangle'">
+                <i class="fas fa-draw-polygon"></i>
+            </button>
+            <input type="color" id="colorPicker" value="#000000" onchange="setPencilColor(event)" />
+        </div>
+    </div>
+
+    <!-- Modal de Cargando -->
+    <div id="loadingModal" class="modal">
+        <div class="modal-content">
+            <i class="fas fa-spinner fa-spin loading-icon"></i>
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+    <script>
+        function showLoadingModal() {
+            document.getElementById('loadingModal').style.display = 'block';
+        }
+    </script>
 </body>
 
 </html>
