@@ -20,6 +20,12 @@
             overflow-x: hidden;
         }
 
+        label{
+            font-weight: bold;
+            margin-top: 2px;
+            color:rgb(130, 130, 130);
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -228,30 +234,51 @@
         </form>
         <canvas id="canvas"></canvas>
         <div class="top-toolbar">
-            <button type="button" onclick="setPencil()">
-                <i class="fas fa-pencil-alt"></i>
-            </button>
-            <button type="button" onclick="setEraser()">
-                <i class="fas fa-eraser"></i>
-            </button>
-            <button type="button" onclick="clearCanvas()">
-                <i class="fas fa-trash"></i>
-            </button>
+            <div style="display: flex; align-items: center; flex-direction: column;">
+                <button type="button" onclick="setPencil()">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+                <label>Lápiz</label>
+            </div>
+            <div style="display: flex; align-items: center; flex-direction: column;">
+                <button type="button" onclick="setEraser()">
+                    <i class="fas fa-eraser"></i>
+                </button>
+                <label>Borrador</label>
+            </div>
+            <div style="display: flex; align-items: center; flex-direction: column;">
+                <button type="button" onclick="clearCanvas()">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <label>Eliminar</label>
+            </div>
         </div>
         <div class="bottom-toolbar">
-            <button type="button" onclick="currentTool = 'circle'">
-                <i class="fas fa-circle"></i>
-            </button>
-            <button type="button" onclick="currentTool = 'square'">
-                <i class="fas fa-square"></i>
-            </button>
-            <button type="button" onclick="currentTool = 'triangle'">
-                <i class="fas fa-draw-polygon"></i>
-            </button>
-            <input type="color" id="colorPicker" value="#000000" onchange="setPencilColor(event)" />
+            <div style="display: flex; align-items: center; flex-direction: column;">
+                <button type="button" onclick="currentTool = 'circle'">
+                    <i class="fas fa-circle"></i>
+                </button>
+                <label>Circulo</label>
+            </div>
+            <div style="display: flex; align-items: center; flex-direction: column;">
+                <button type="button" onclick="currentTool = 'square'">
+                    <i class="fas fa-square"></i>
+                </button>
+                <label>Cuadrado</label>
+            </div>
+            <div style="display: flex; align-items: center; flex-direction: column;">
+                <button type="button" onclick="currentTool = 'triangle'">
+                    <i class="fa-solid fa-play fa-rotate-270"></i>
+                </button>
+                <label>Triangulo</label>
+            </div>
+            <div style="display: flex; align-items: center; flex-direction: column;">
+                <input type="color" id="colorPicker" value="#000000" onchange="setPencilColor(event)" />
+                <label>Color</label>
+            </div>
+            
         </div>
     </div>
-
     <!-- Modal de Cargando -->
     <div id="loadingModal" class="modal">
         <div class="modal-content">
