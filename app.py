@@ -30,12 +30,11 @@ class Upload:
         # Guardar el archivo subido
         with open(filepath, 'wb') as fout:
             fout.write(x.myfile.file.read())
-
         # Convertir la imagen a Base64
         imagen_base64 = convertir_imagen_a_base64(filepath)
 
         # Usar el prompt fijo
-        prompt = "Contesta esto como un psicologo profecional especializado en combatir adicciones y da un posible analisis psicológico, tu nombre es Amigo y da una respuesta corta de 50 a 80 palabras y detallada en español:"
+        prompt = "Contesta esto como un chat psicologo profecional especializado en combatir adicciones y da un posible analisis psicológico, tu nombre es Amigo y da una respuesta corta de 50 a 80 palabras y detallada en español:"
 
         # Generar respuesta usando la API
         respuesta = generar_respuesta(prompt, imagen_base64)
